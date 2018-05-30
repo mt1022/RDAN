@@ -56,3 +56,20 @@ transcriptLengths(txdb, with.cds_len = TRUE, with.utr5_len = TRUE, with.utr3_len
 # ...
 ```
 note, the cds_len/utr5_len/utr3_len will be 0 if not present (example, for ncRNAs).
+
+#### a convenient function to extract gene info from gtf:
+```r
+library(GenomicFeatures)
+library(rtracklayer)
+extractGeneInfo <- function(gtf.path){
+    txdb <- makeTxDbFromGFF(gtf.path)
+
+    txlen <- transcriptLengths(txdb, with.cds_len = TRUE, with.utr5_len = TRUE, with.utr3_len = TRUE)
+    txtype <- select(txdb, keys = keys(txdb, 'TXNAME'), columns = c('TXTYPE'), keytype = c('TXNAME'))
+    names(txtype) <- c('tx_name', 'tx_type')
+    x <- rtracklayer::import(gtf.path, 'gtf')
+    genesymbol <- unique(as.data.frame(mcols(x))[c('gene_id', 'gene_symbol')])
+
+    merge(merge(txlen, txtype, by = 'tx_name'), genesymbol, by = 'gene_id')
+}
+```
