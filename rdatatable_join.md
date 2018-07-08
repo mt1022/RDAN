@@ -34,7 +34,7 @@ NB: shorthand like X[Y, on=c("a", V2="b")] is also possible if, e.g., column "a"
 > - From v1.9.8, (non-equi) joins using binary operators >=, >, <=, < are also possible, e.g., X[Y, on=c("x>=a", "y<=b")], or for interactive use as X[Y, on=.(x>=a, y<=b)].
 
 Here are some example from manual:
-```{r}
+```r
 library(data.table)
 DT = data.table(x=rep(c("b","a","c"),each=3), y=c(1,3,6), v=1:9)
 DT
