@@ -6,6 +6,7 @@ title: ggplot
 - black axis text;
 - centered title/subtitle;
 - no strip background;
+
 ```r
 mytheme <- theme_classic(base_size = 12) + theme(
     axis.text = element_text(color = 'black'),
