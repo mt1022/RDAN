@@ -73,3 +73,4 @@ extractGeneInfo <- function(gtf.path){
     merge(merge(txlen, txtype, by = 'tx_name'), genesymbol, by = 'gene_id')
 }
 ```
+Note: some GTF files use "gene_name" (for exampe ensembl) rather than "gene_symbol". Therefore the line to extract genesymbol should be adjusted based on the gtf file.

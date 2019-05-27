@@ -29,3 +29,8 @@ ggplot(plt, aes(x = sample, y = log2TE - log2TE.mock)) +
     labs(x = NULL, y = 'log2FC of TE', color = NULL) +
     mytheme
 ```
+
+#### How to plot fractions (0.23) as percentage (23%)
+```R
++ scale_y_continuous(labels = scales::trans_format('identity', format = scales::percent_format()))
+```
