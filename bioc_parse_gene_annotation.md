@@ -76,16 +76,23 @@ extractGeneInfo <- function(gtf.path){
 Note: some GTF files use "gene_name" (for exampe ensembl) rather than "gene_symbol". Therefore the line to extract genesymbol should be adjusted based on the gtf file. For example, for standard ensembl GTF files, the following function could be used:
 ```r
 extractGeneInfo <- function(gtf.path){
+    require(GenomicFeatures)
+    require(rtracklayer)
     txdb <- makeTxDbFromGFF(gtf.path)
-    
+
     txlen <- transcriptLengths(txdb, with.cds_len = TRUE, with.utr5_len = TRUE, with.utr3_len = TRUE)
-    x <- rtracklayer::import(gtf.path, 'gtf')
-    scols <- c('gene_id', 'gene_name', 'gene_biotype', 'transcript_id', 'transcript_biotype')
-    scols <- scols[scols %in% names(mcols(x))]
-    txtype <- unique(mcols(x)[, scols])
+    x <- import(gtf.path, 'gtf')
+    x <- as.data.frame(x)
+    scols <- c('gene_id', 'gene_name', 'gene_biotype', 'transcript_id',
+        'transcript_biotype', 'protein_id', 'seqnames', 'strand')
+    scols <- scols[scols %in% colnames(x)]
+    txtype <- x[, scols]
+    setDT(txtype)
+    txtype <- unique(txtype)
     res <- merge(txlen, txtype, by.x = c('gene_id', 'tx_name'), by.y = c('gene_id', 'transcript_id'))
-    res <- data.table::as.data.table(as.data.frame(res))
+    res <- as.data.table(res)
+    res <- res[order(gene_id, tx_name, protein_id)][!duplicated(tx_name)]
+    setnames(res, 'seqnames', 'chrom')
     return(res)
 }
 ```
-
