@@ -2,7 +2,7 @@
 title: ggplot
 ---
 
-#### A truely classic theme with:
+#### To make the classic theme more classic:
 - black axis text;
 - centered title/subtitle;
 - no strip background;
