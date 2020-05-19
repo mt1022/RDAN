@@ -19,7 +19,7 @@ Y <- t(X)/sqrt(ncol(m))   # Y <= X'/sqrt(n)
 covX <- t(Y) %*% Y  # Y'*Y = XX'/n, i.e. the covariance matrix
 eigen(covX)
 
-# PCA sdev = variance(svd$d) / sqrt(n-1)
+# PCA sdev = sqrt(sum of squares)(i.e., svd$d) / sqrt(n-1)
 print(X.svd$d/sqrt(nrow(iris) -1))
 print(pca$sdev)
 
@@ -36,4 +36,14 @@ t(pca$x)
 diag(X.svd$d) %*% t(X.svd$v)
 t(X.svd$u) %*% X
 t(eigen(covX)$vectors) %*% X
+
+
+# variance explained by each PC
+tmp <- pca$sdev^2 * (nrow(iris) - 1)
+diag(cov(pca$x)) * (nrow(iris) - 1)
+X.svd$d^2   # square of sigular value is eigen value of XX'
+
+# fraction of variance explained by each PC
+tmp/sum(tmp)
+diag(cov(pca$x)) / sum(diag(cov(pca$x)))
 ```
