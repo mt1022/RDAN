@@ -8,11 +8,12 @@ title: ggplot
 - no strip background;
 
 ```r
-mytheme <- theme_classic(base_size = 12) + theme(
+theme_set(theme_classic(base_size = 12) + theme(
     axis.text = element_text(color = 'black'),
     strip.background = element_blank(),
+    strip.text = element_text(size = 12),
     plot.title = element_text(hjust = 0.5),
-    plot.subtitle = element_text(hjust = 0.5))
+    plot.subtitle = element_text(hjust = 0.5)))
 ```
 
 #### boxplot with scatter plot overlay (example code)
