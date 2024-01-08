@@ -32,6 +32,14 @@ ggplot(plt, aes(x = sample, y = log2TE - log2TE.mock)) +
 ```
 
 #### How to plot fractions (0.23) as percentage (23%)
-```R
+```r
 + scale_y_continuous(labels = scales::trans_format('identity', format = scales::percent_format()))
 ```
+
+### Put multi-variable facet_wrap labels on one line
+```r
+facet_wrap(vars(var1, var2), labeller = label_wrap_gen(multi_line = FALSE))
+```
+The one line label will be shown in the plot as "var1, var2".
+ref: https://stackoverflow.com/questions/37144861/ggplot2-put-multi-variable-facet-wrap-labels-on-one-line
+
