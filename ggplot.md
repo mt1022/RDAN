@@ -2,7 +2,7 @@
 title: ggplot
 ---
 
-#### To make the classic theme more classic:
+### To make the classic theme more classic:
 - black axis text;
 - centered title/subtitle;
 - no strip background;
@@ -16,7 +16,7 @@ theme_set(theme_classic(base_size = 12) + theme(
     plot.subtitle = element_text(hjust = 0.5)))
 ```
 
-#### boxplot with scatter plot overlay (example code)
+### boxplot with scatter plot overlay (example code)
 ```r
 ggplot(plt, aes(x = sample, y = log2TE - log2TE.mock)) +
     geom_jitter(aes(color = grp, alpha = grp),
@@ -31,7 +31,7 @@ ggplot(plt, aes(x = sample, y = log2TE - log2TE.mock)) +
     mytheme
 ```
 
-#### How to plot fractions (0.23) as percentage (23%)
+### How to plot fractions (0.23) as percentage (23%)
 ```r
 + scale_y_continuous(labels = scales::trans_format('identity', format = scales::percent_format()))
 ```
@@ -43,3 +43,11 @@ facet_wrap(vars(var1, var2), labeller = label_wrap_gen(multi_line = FALSE))
 The one line label will be shown in the plot as "var1, var2".
 ref: https://stackoverflow.com/questions/37144861/ggplot2-put-multi-variable-facet-wrap-labels-on-one-line
 
+### Remove space between bars and categorical axis in barplot
+```{r}
+# for horizontal bars
+p + scale_x_continuous(expand = expansion(mult = c(0, 0.05)))
+
+# for vertical bars
+p + scale_y_continuous(expand = expansion(mult = c(0, 0.05)))
+```
