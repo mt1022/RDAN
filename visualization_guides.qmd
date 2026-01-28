@@ -1,0 +1,64 @@
+---
+title: "Visualization Guides"
+format: html
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+library(tidyverse)
+```
+
+
+```{r}
+library(tidyverse)
+
+# 左图
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+    geom_point() +
+    labs(x = 'Sepal length', y = 'Sepal width', color = NULL)
+ggsave('iris_default.tiff') # Saving 5.84 x 5.91 in image
+
+# 右图
+ggplot(iris, aes(x = Sepal.Length, y = Sepal.Width, color = Species)) +
+    geom_point() +
+    labs(x = 'Sepal length', y = 'Sepal width', color = NULL) +
+    theme_classic(base_size = 12)
+ggsave('iris_custom.tiff', width = 4, height = 3)
+
+```
+
+```{r}
+dtt <- tibble(
+    Sex = sample(c('Female', 'Male'), 100, replace = TRUE),
+    Weight = rnorm(100))
+
+# bad
+ggplot(dtt, aes(x = Sex, y = Weight)) +
+    geom_boxplot()
+
+# good
+ggplot(dtt, aes(x = Sex, y = Weight)) +
+    geom_boxplot() +
+    labs(x = NULL)
+
+ggsave('sex_example.tiff', width = 4, height = 3)
+
+x <- rnorm(2000)
+y <- x/2 + rnorm(2000)
+dtt <- tibble(score_a = x, score_b = y)
+
+# bad
+ggplot(dtt, aes(score_a, score_b)) +
+    geom_point() +
+    labs(x = 'Score A', y = 'Score B') +
+    theme_classic(base_size = 12)
+ggsave('scatter1.tiff', width = 3, height = 3)
+
+# better
+ggplot(dtt, aes(score_a, score_b)) +
+    geom_point(size = 1, alpha = 0.2) +
+    labs(x = 'Score A', y = 'Score B') +
+    theme_classic(base_size = 12)
+ggsave('scatter2.tiff', width = 3, height = 3)
+```
