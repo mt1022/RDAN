@@ -133,9 +133,20 @@ iris |>
 # 1 setosa                 5.01           0.352            3.43          0.379
 # 2 versicolor             5.94           0.516            2.77          0.314
 # 3 virginica              6.59           0.636            2.97          0.322
+```
 
+```{r}
+# 长数据框 与 宽数据框 之间的变换
 
-df_long
+df_long <- tribble(
+  ~id, ~measurement, ~value,
+  "A", "bp1",        100,
+  "A", "bp2",        120,
+  "B", "bp1",        140,
+  "B", "bp2",        115,
+  "C", "bp1",        120,
+  "C", "bp2",        125
+)
 # # A tibble: 6 × 3
 #   id    measurement value
 #   <chr> <chr>       <dbl>
@@ -146,13 +157,73 @@ df_long
 # 5 C     bp1           120
 # 6 C     bp2           125
 
-df_long |> pivot_wider(names_from = measurement, values_from = value)
+# long to wide
+df_wide <- df_long |> pivot_wider(names_from = measurement, values_from = value)
+df_wide
 # # A tibble: 3 × 3
 #   id      bp1   bp2
 #   <chr> <dbl> <dbl>
 # 1 A       100   120
 # 2 B       140   115
 # 3 C       120   125
+
+# wide to long
+df_wide |> pivot_longer(bp1:bp2, names_to = 'measurement', values_to = 'value')
+# # A tibble: 6 × 3
+#   id    measurement value
+#   <chr> <chr>       <dbl>
+# 1 A     bp1           100
+# 2 A     bp2           120
+# 3 B     bp1           140
+# 4 B     bp2           115
+# 5 C     bp1           120
+# 6 C     bp2           125
+
+# 长变宽可以对指定values来自多个列
+# long to wide with values from multiple columns
+df_wide |> pivot_wider(names_from = id, values_from = bp1:bp2)
+#   bp1_A bp1_B bp1_C bp2_A bp2_B bp2_C
+#   <dbl> <dbl> <dbl> <dbl> <dbl> <dbl>
+# 1   100   140   120   120   115   125
+
+# adjust final column names
+# here {.value} refers to column name of values_from colums (bp1, bp2),
+# {variable} refers to column values of names_from column (id), that is, {variable} is in set {A, B, C}.
+df_wider <- df_wide |> pivot_wider(names_from = id, values_from = bp1:bp2, names_glue = '{id}__{.value}')
+df_wider
+#   A__bp1 B__bp1 C__bp1 A__bp2 B__bp2 C__bp2
+#    <dbl>  <dbl>  <dbl>  <dbl>  <dbl>  <dbl>
+# 1    100    140    120    120    115    125
+
+# 宽变长的时候，原本的列名会变成1列，但可以通过names_sep或names_pattern将这个存储原来列名
+# 的列进一步拆分成不同的列
+# revert
+# names_sep determines how column names like A__bp1, A__bp2, ... are
+# separate into two columns of id and measurment
+df_wider |> pivot_longer(A__bp1:C__bp2, names_to = c('id', 'measurement'), names_sep = '__')
+#   id    measurement value
+#   <chr> <chr>       <dbl>
+# 1 A     bp1           100
+# 2 B     bp1           140
+# 3 C     bp1           120
+# 4 A     bp2           120
+# 5 B     bp2           115
+# 6 C     bp2           125
+
+# alternatively, specify separate of column names with regular expression
+# first group to id, while the other to measurement
+df_wider |> pivot_longer(
+    A__bp1:C__bp2,
+    names_to = c('id', 'measurement'),
+    names_pattern = '(.*)__(.*)')
+#   id    measurement value
+#   <chr> <chr>       <dbl>
+# 1 A     bp1           100
+# 2 B     bp1           140
+# 3 C     bp1           120
+# 4 A     bp2           120
+# 5 B     bp2           115
+# 6 C     bp2           125
 ```
 
 ```{r}
@@ -190,5 +261,15 @@ tb |> separate_longer_delim(student, delim = ',')
 # 3 B     Tom       
 # 4 B     Jerry     
 # 5 C     Garfield  
+```
+
+```{r}
+# 对多列进行操作
+# pick与across互补：
+# - across对很多列进行操作，对其中每一列应用某个函数；
+#- pick也对很多列进行操作，但是是对整个被选中的列组成的data frame应用某个函数
+mtcars |> mutate(mean = rowMeans(pick(mpg:drat)))
+
+mtcars |> mutate(across(mpg:drat, ~ .x + 2))
 ```
 
